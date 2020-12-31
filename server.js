@@ -16,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Middleware to serve our static files
 app.use(express.static("public"));
+// Middleware for routes
+app.use("/", htmlRoutes);
+app.use("/api", apiRoutes);
 
 
 // Start server
