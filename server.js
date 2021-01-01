@@ -2,19 +2,11 @@
 var express = require("express");
 var path = require('path');
 var fs = require("fs");
-var util = require("util");
+// var util = require("util");
 
+// import uuid for creating ids for new notes
 const { v4: uuidv4 } = require('uuid');
 console.log(uuidv4());
-
-// This package will be used to generate our unique ids. https://www.npmjs.com/package/uuid
-
-// var readFileAsync = util.promisify(fs.readFile);
-// var writeFileAsync = util.promisify(fs.writeFile);
-
-// add routes as dependencies
-// var apiRoutes = require("./routes/apiRoutes");
-// var htmlRoutes = require("./routes/htmlRoutes");
 
 // initialize Express app 
 var app = express();
@@ -27,10 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Middleware to serve our static files
 app.use(express.static("public"));
-// Middleware for routes
-// app.use("/", htmlRoutes);
-// app.use("/api", apiRoutes);
 
+// HTML Routes
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./public/index.html"));
 });
@@ -43,6 +33,7 @@ app.get("/assets/js/index.js", (req, res) => {
     res.sendFile(path.join(__dirname, "./assets/js/index.js"));
 });
 
+// API Routes
 app.get("/api/notes", (req, res) => {
   res.json(JSON.parse(fs.readFileSync("./db/db.json")));
 });
@@ -50,7 +41,6 @@ app.get("/api/notes", (req, res) => {
 app.post("/api/notes", (req, res) => {
     var currentNotes = JSON.parse(fs.readFileSync("./db/db.json"));
     var newNote = req.body;
-    // newNote.concat(`id: uuidv4()`)
     console.log(currentNotes);
     console.log(newNote);
 
@@ -63,7 +53,7 @@ app.delete("/api/notes/:id", (req, res) => {
 // delete not working, trying to use uuid to set id
 });
 
-// Start server
+// Starts server
 app.listen(PORT, function() {
     console.log('Listening on PORT: ' + PORT);
 });
