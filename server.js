@@ -1,7 +1,16 @@
-// import express
+// import express, path, fs, and util modules
 var express = require("express");
-const path = require('path');
+var path = require('path');
 var fs = require("fs");
+var util = require("util");
+
+const { v4: uuidv4 } = require('uuid');
+console.log(uuidv4());
+
+// This package will be used to generate our unique ids. https://www.npmjs.com/package/uuid
+
+// var readFileAsync = util.promisify(fs.readFile);
+// var writeFileAsync = util.promisify(fs.writeFile);
 
 // add routes as dependencies
 // var apiRoutes = require("./routes/apiRoutes");
@@ -35,16 +44,24 @@ app.get("/assets/js/index.js", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-    fs.readfile('./db/db.json', `utf-8`, (err, data) => {
-        return res.json(notes);
-    })
+  res.json(JSON.parse(fs.readFileSync("./db/db.json")));
 });
 
 app.post("/api/notes", (req, res) => {
-    fs.writeFile('./db/db.json', 'utf8', (err, data) => {
-        res.json(notes);
-    })
-})
+    var currentNotes = JSON.parse(fs.readFileSync("./db/db.json"));
+    var newNote = req.body;
+    // newNote.concat(`id: uuidv4()`)
+    console.log(currentNotes);
+    console.log(newNote);
+
+    currentNotes.push(newNote);
+    fs.writeFileSync(path.join(__dirname, "db/db.json"),JSON.stringify(currentNotes));
+    res.send(currentNotes);
+});
+
+app.delete("/api/notes/:id", (req, res) => {
+// delete not working, trying to use uuid to set id
+});
 
 // Start server
 app.listen(PORT, function() {
